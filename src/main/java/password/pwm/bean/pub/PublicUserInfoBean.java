@@ -23,10 +23,13 @@
 package password.pwm.bean.pub;
 
 import password.pwm.bean.PasswordStatus;
+import password.pwm.PwmConstants;
 import password.pwm.bean.UserInfoBean;
 import password.pwm.config.Configuration;
 import password.pwm.config.profile.PwmPasswordRule;
+import password.pwm.http.JspUtility;
 import password.pwm.http.tag.PasswordRequirementsTag;
+import password.pwm.util.macro.MacroMachine;
 
 import java.io.Serializable;
 import java.util.*;
@@ -48,7 +51,7 @@ public class PublicUserInfoBean implements Serializable {
     public List<String> passwordRules;
     public Map<String, String> attributes;
 
-    public static PublicUserInfoBean fromUserInfoBean(final UserInfoBean userInfoBean, final Configuration config, final Locale locale) {
+    public static PublicUserInfoBean fromUserInfoBean(final UserInfoBean userInfoBean, final Configuration config, final Locale locale, final MacroMachine macroMachine) {
         final PublicUserInfoBean publicUserInfoBean = new PublicUserInfoBean();
         publicUserInfoBean.userDN = (userInfoBean.getUserIdentity() == null) ? "" : userInfoBean.getUserIdentity().getUserDN();
         publicUserInfoBean.ldapProfile = (userInfoBean.getUserIdentity() == null) ? "" : userInfoBean.getUserIdentity().getLdapProfileID();
@@ -75,7 +78,8 @@ public class PublicUserInfoBean implements Serializable {
         publicUserInfoBean.passwordRules = PasswordRequirementsTag.getPasswordRequirementsStrings(
                 userInfoBean.getPasswordPolicy(),
                 config,
-                locale
+                locale,
+                macroMachine
         );
 
         if (userInfoBean.getCachedAttributeValues() != null && !userInfoBean.getCachedAttributeValues().isEmpty()) {
